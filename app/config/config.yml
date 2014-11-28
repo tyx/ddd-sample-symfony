@@ -1,0 +1,83 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+
+framework:
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: false }
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    templating:
+        engines: ['php']
+    session:
+        # handler_id set to null will use default session handler from php.ini
+        handler_id:  ~
+    fragments:       ~
+    http_method_override: true
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        driver:   "%database_driver%"
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "%database_name%"
+        user:     "%database_user%"
+        password: "%database_password%"
+        charset:  UTF8
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        entity_managers:
+            default:
+                auto_mapping: false
+                mappings:
+                    user_profile:
+                        type: xml
+                        dir: %kernel.root_dir%/../src/UserProfile/Infra/Persistence/Resources/doctrine
+                        prefix: Afsy\UserProfile\Domain
+                        is_bundle: false
+
+                    booking_engine:
+                        type: xml
+                        dir: %kernel.root_dir%/../src/BookingEngine/Infra/Persistence/Resources/doctrine
+                        prefix: Afsy\BookingEngine\Domain
+                        is_bundle: false
+
+                    deal_publisher:
+                        type: xml
+                        dir: %kernel.root_dir%/../src/DealPublisher/Infra/Persistence/Resources/doctrine
+                        prefix: Afsy\DealPublisher\Domain
+                        is_bundle: false
+
+jms_serializer:
+    metadata:
+        directories:
+            user_profile:
+                namespace_prefix: "Afsy\\UserProfile\\App\\Representation"
+                path: "%kernel.root_dir%/../src/UserProfile/UI/Resources/serializer"
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
+    spool:     { type: memory }
+
+fos_rest:
+    param_fetcher_listener: false
+    allowed_methods_listener: true
+    body_listener: true
+    routing_loader:
+        default_format: json
+        include_format: true
+    format_listener:
+        rules:
+            - { path: '^/', priorities: ['json'], fallback_format: 'json', prefer_extension: true }

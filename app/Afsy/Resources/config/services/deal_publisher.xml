@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Application Services -->
+        <service id="afsy.deal_publisher.app.deal_service" class="Afsy\DealPublisher\App\DealService">
+            <argument type="service" id="afsy.deal_publisher.deal.repository.orm" />
+        </service>
+
+        <!-- Domain Services -->
+        <service id="afsy.deal_publisher.deal.repository.orm" class="Afsy\DealPublisher\Infra\Persistence\ORMDealRepository" public="false">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>Afsy\DealPublisher\Domain\Deal</argument>
+        </service>
+
+        <service id="afsy.deal_publisher.listener.booking_confirmed" class="Afsy\DealPublisher\Domain\BookingConfirmedListener">
+            <argument type="service" id="afsy.deal_publisher.app.deal_service" />
+            <tag name="afsy.booking_engine.event_listener" event="booking.confirmed" method="onBookingConfirmed" />
+        </service>
+    </services>
+</container>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Application Services -->
+        <service id="afsy.booking_engine.app.booking_service" class="Afsy\BookingEngine\App\BookingService">
+            <argument type="service" id="afsy.booking_engine.app.booking_query_service" />
+            <argument type="service" id="afsy.booking_engine.booking.repository.orm" />
+            <argument type="service" id="afsy.booking_engine.deal.repository.orm" />
+            <argument type="service" id="afsy.booking_engine.customer.repository.orm" />
+            <argument type="service" id="afsy.booking_engine.payment_gateway.stub" />
+        </service>
+
+        <service id="afsy.booking_engine.app.booking_query_service" class="Afsy\BookingEngine\App\BookingQueryService">
+            <argument type="service" id="afsy.booking_engine.booking.repository.orm" />
+        </service>
+
+        <!-- UI -->
+        <service id="afsy.booking_engine.console.book_deal" class="Afsy\BookingEngine\UI\Console\BookDealCli">
+            <argument type="service" id="afsy.booking_engine.app.booking_service" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="afsy.booking_engine.controller.booking" class="Afsy\BookingEngine\UI\Controller\BookingController">
+            <argument type="service" id="afsy.booking_engine.app.booking_service" />
+            <argument type="service" id="afsy.booking_engine.app.booking_query_service" />
+            <argument type="service" id="security.context" />
+            <argument type="service" id="form.factory" />
+        </service>
+
+        <!-- Domain Services -->
+        <service id="afsy.booking_engine.event_bus" class="Afsy\Common\Infra\SymfonyEventBus" public="false">
+            <argument type="service" id="afsy.booking_engine.event_dispatcher" />
+            <argument type="service" id="logger" />
+            <tag name="monolog.logger" channel="domain" />
+        </service>
+
+        <service id="afsy.booking_engine.event_dispatcher" class="Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher" public="false">
+            <argument type="service" id="service_container" />
+        </service>
+
+        <service id="afsy.booking_engine.booking.repository.orm" class="Afsy\BookingEngine\Infra\Persistence\ORMBookingRepository" public="false">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>Afsy\BookingEngine\Domain\Booking</argument>
+            <argument type="service" id="afsy.booking_engine.event_bus" />
+        </service>
+
+        <service id="afsy.booking_engine.customer.repository.orm" class="Afsy\BookingEngine\Infra\Persistence\ORMCustomerRepository" public="false">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>Afsy\BookingEngine\Domain\Customer</argument>
+        </service>
+
+        <service id="afsy.booking_engine.deal.repository.orm" class="Afsy\BookingEngine\Infra\Persistence\ORMDealRepository" public="false">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>Afsy\BookingEngine\Domain\Deal</argument>
+        </service>
+
+        <service id="afsy.booking_engine.customer.repository.http" class="Afsy\BookingEngine\Infra\HttpCustomerRepository" public="false">
+            <argument type="service" id="afsy.booking_engine.internal_http_client" />
+            <argument type="service" id="router" />
+            <argument type="service" id="afsy.booking_engine.customer_transformer_from_user_representation" />
+        </service>
+
+        <service id="afsy.booking_engine.customer_transformer_from_user_representation" class="Afsy\BookingEngine\Infra\CustomerTransformer" public="false">
+            <argument type="service" id="serializer" />
+        </service>
+
+        <service id="afsy.booking_engine.internal_http_client" class="Guzzle\Http\Client" public="false">
+            <argument>%host%</argument>
+        </service>
+
+        <service id="afsy.booking_engine.payment_gateway.stub" class="Afsy\BookingEngine\Infra\Payment\StubPaymentGateway">
+            <argument type="service" id="request_stack" />
+        </service>
+    </services>
+</container>

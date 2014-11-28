@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<serializer>
+    <class name="Afsy\UserProfile\App\Representation\UserRepresentation" exclusion-policy="ALL">
+        <property name="id" type="integer" expose="true" />
+        <property name="emailAddress" type="string" expose="true" />
+    </class>
+</serializer>

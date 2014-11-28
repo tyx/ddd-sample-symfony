@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Application Services -->
+        <service id="afsy.user_profile.app.user_service" class="Afsy\UserProfile\App\UserService">
+            <argument type="service" id="afsy.user_profile.user.repository.orm" />
+            <argument type="service" id="afsy.user_profile.password_encoder" />
+        </service>
+
+        <service id="afsy.user_profile.app.user_query_service" class="Afsy\UserProfile\App\UserQueryService">
+            <argument type="service" id="afsy.user_profile.user.repository.orm" />
+        </service>
+
+        <!-- UI -->
+        <service id="afsy.user_profile.console.register_user" class="Afsy\UserProfile\UI\Console\RegisterUserCli">
+            <argument id="afsy.user_profile.app.user_service" type="service" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="afsy.user_profile.controller.internal_user" class="Afsy\UserProfile\UI\Controller\InternalUserController">
+            <argument id="afsy.user_profile.app.user_query_service" type="service" />
+            <argument type="service" id="serializer" />
+        </service>
+
+        <!-- Domain Service -->
+        <service id="afsy.user_profile.user.repository.orm" class="Afsy\UserProfile\Infra\Persistence\ORMUserRepository">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>Afsy\UserProfile\Domain\User</argument>
+        </service>
+
+        <service id="afsy.user_profile.password_encoder" class="Symfony\Component\Security\Core\Encoder\PlaintextPasswordEncoder" factory-service="security.encoder_factory"
+             factory-method="getEncoder">
+            <argument>Afsy\UserProfile\Domain\User</argument>
+        </service>
+    </services>
+</container>

@@ -1,0 +1,4 @@
+booking_engine_booking:
+    name_prefix: booking_engine
+    type:     rest
+    resource: afsy.booking_engine.controller.booking

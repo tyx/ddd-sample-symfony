@@ -1,0 +1,6 @@
+user_profile:
+    resource: "@AfsyBundle/Resources/routing/user_profile.yml"
+
+booking_engine:
+    type: rest
+    resource: "@AfsyBundle/Resources/routing/booking_engine.yml"

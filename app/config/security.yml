@@ -1,0 +1,15 @@
+security:
+    providers:
+        in_memory:
+            memory: ~
+
+    encoders:
+        Afsy\UserProfile\Domain\User: plaintext
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        default:
+            anonymous: ~

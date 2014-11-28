@@ -1,0 +1,3 @@
+user_profile_internal_get_user:
+    path: /_internal/user/{userId}.{_format}
+    defaults:  { _controller: afsy.user_profile.controller.internal_user:getAction, _format: json }
